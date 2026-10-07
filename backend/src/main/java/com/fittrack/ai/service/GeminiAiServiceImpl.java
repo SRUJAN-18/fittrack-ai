@@ -161,7 +161,7 @@ public class GeminiAiServiceImpl implements GeminiAiService {
         String name = user != null ? user.getName() : "Athlete";
         String goal = user != null && user.getFitnessGoal() != null ? user.getFitnessGoal() : "General Fitness";
         String activity = user != null && user.getActivityLevel() != null ? user.getActivityLevel() : "Moderate";
-        Double bmi = user != null ? user.calculateBmi() : 22.5;
+        Double bmi = (user != null && user.calculateBmi() != null) ? user.calculateBmi() : 22.5;
         String bmiCategory = user != null ? user.getBmiCategory() : "Normal weight";
 
         String lowerQuery = query.toLowerCase();
