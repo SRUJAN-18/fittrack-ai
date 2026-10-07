@@ -132,7 +132,7 @@ export default function DashboardPage() {
         <div className="welcome-content">
           <div className="welcome-badge">
             <Sparkles size={14} className="text-emerald" />
-            <span>FitTrack AI Intelligence</span>
+            <span>Fit Tracker by Srujan • AI Intelligence</span>
           </div>
           <h1>Welcome back, <span className="gradient-text-emerald">{profile?.name || user?.name || 'Athlete'}</span></h1>
           <p className="welcome-motto">

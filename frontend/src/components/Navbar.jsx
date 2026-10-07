@@ -42,9 +42,12 @@ export default function Navbar() {
           <div className="logo-icon-wrapper">
             <Activity className="logo-icon" size={24} />
           </div>
-          <div className="brand-text">
-            <span>FitTrack</span>
-            <span className="brand-ai">AI</span>
+          <div className="brand-text-wrapper">
+            <div className="brand-text">
+              <span>Fit Tracker</span>
+              <span className="brand-ai">AI</span>
+            </div>
+            <span className="brand-author-tag">by Srujan</span>
           </div>
         </Link>
 
@@ -189,21 +192,39 @@ export default function Navbar() {
           box-shadow: 0 0 15px rgba(16, 185, 129, 0.2);
         }
 
+        .brand-text-wrapper {
+          display: flex;
+          flex-direction: column;
+          line-height: 1.1;
+        }
+
         .brand-text {
           font-family: var(--font-display);
-          font-size: 1.35rem;
+          font-size: 1.25rem;
           font-weight: 800;
           color: #ffffff;
           letter-spacing: -0.02em;
           display: flex;
           align-items: center;
-          gap: 0.25rem;
+          gap: 0.35rem;
         }
 
         .brand-ai {
           background: linear-gradient(135deg, #34d399 0%, #06b6d4 100%);
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
+          font-size: 0.85em;
+        }
+
+        .brand-author-tag {
+          font-size: 0.68rem;
+          font-weight: 700;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+          background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          margin-top: 2px;
         }
 
         .desktop-nav {

@@ -85,7 +85,8 @@ export default function RegisterPage() {
           <div className="register-icon-wrap">
             <UserPlus size={26} />
           </div>
-          <h2>Join FitTrack AI</h2>
+          <h2>Join Fit Tracker</h2>
+          <div className="register-creator-tag">by Srujan</div>
           <p>Create your account and personalize your AI-powered fitness journey</p>
         </div>
 
@@ -315,6 +316,18 @@ export default function RegisterPage() {
           font-size: 1.85rem;
           font-weight: 800;
           color: #ffffff;
+        }
+
+        .register-creator-tag {
+          display: inline-block;
+          font-size: 0.75rem;
+          font-weight: 700;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+          background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          margin-top: 0.2rem;
         }
 
         .register-head p {

@@ -45,7 +45,8 @@ export default function LoginPage() {
           <div className="auth-icon-wrap">
             <Activity size={28} />
           </div>
-          <h2>Welcome Back</h2>
+          <h2>Fit Tracker</h2>
+          <div className="auth-creator-tag">by Srujan</div>
           <p>Sign in to access your personalized fitness metrics & AI coach</p>
         </div>
 
@@ -162,6 +163,18 @@ export default function LoginPage() {
           font-size: 1.75rem;
           font-weight: 800;
           color: #ffffff;
+        }
+
+        .auth-creator-tag {
+          display: inline-block;
+          font-size: 0.75rem;
+          font-weight: 700;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+          background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          margin-top: 0.2rem;
         }
 
         .auth-brand-head p {

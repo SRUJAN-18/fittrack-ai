@@ -9,10 +9,13 @@ export default function Footer() {
           <div className="footer-brand">
             <div className="footer-brand-header">
               <Activity className="footer-icon" size={20} />
-              <span className="footer-title">FitTrack AI</span>
+              <div className="footer-title-group">
+                <span className="footer-title">Fit Tracker <span className="brand-ai">AI</span></span>
+                <span className="footer-by-badge">by Srujan</span>
+              </div>
             </div>
             <p className="footer-desc">
-              Your personalized fitness companion. Built with Java Spring Boot, React, MySQL, and Google Gemini API.
+              Your personalized fitness companion created by Srujan. Built with Java Spring Boot, React, MySQL, and Google Gemini API.
             </p>
           </div>
 
@@ -38,7 +41,7 @@ export default function Footer() {
 
         <div className="footer-bottom">
           <p className="copyright">
-            © {new Date().getFullYear()} FitTrack AI. All rights reserved.
+            © {new Date().getFullYear()} Fit Tracker by Srujan. All rights reserved.
           </p>
           <p className="disclaimer">
             Disclaimer: AI recommendations are for general fitness awareness and guidance. Always consult a healthcare professional.
@@ -76,8 +79,15 @@ export default function Footer() {
         .footer-brand-header {
           display: flex;
           align-items: center;
-          gap: 0.5rem;
+          gap: 0.6rem;
           margin-bottom: 0.5rem;
+        }
+
+        .footer-title-group {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          flex-wrap: wrap;
         }
 
         .footer-icon {
@@ -89,6 +99,18 @@ export default function Footer() {
           font-weight: 800;
           font-size: 1.15rem;
           color: #ffffff;
+        }
+
+        .footer-by-badge {
+          font-size: 0.72rem;
+          font-weight: 700;
+          letter-spacing: 0.05em;
+          text-transform: uppercase;
+          background: rgba(16, 185, 129, 0.15);
+          color: #34d399;
+          border: 1px solid rgba(16, 185, 129, 0.3);
+          padding: 0.15rem 0.5rem;
+          border-radius: var(--radius-full);
         }
 
         .footer-desc {

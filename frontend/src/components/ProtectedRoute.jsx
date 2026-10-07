@@ -18,7 +18,7 @@ export default function ProtectedRoute({ children }) {
         color: 'var(--text-muted)'
       }}>
         <Loader2 size={36} className="animate-spin text-emerald" />
-        <p>Loading FitTrack AI...</p>
+        <p>Loading Fit Tracker by Srujan...</p>
       </div>
     );
   }

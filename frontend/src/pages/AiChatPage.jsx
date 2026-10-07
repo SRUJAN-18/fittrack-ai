@@ -23,7 +23,7 @@ export default function AiChatPage() {
     {
       id: 1,
       sender: 'ai',
-      text: `Hello ${profile?.name || user?.name || 'there'}! I am your **FitTrack AI Coach**, powered by Google Gemini.
+      text: `Hello ${profile?.name || user?.name || 'there'}! I am your **Fit Tracker AI Coach** by Srujan, powered by Google Gemini.
 
 I have synchronized your biometric profile:
 * **Current Weight:** ${profile?.weight ? profile.weight + ' kg' : 'Not set'}
@@ -166,7 +166,8 @@ Ask me anything about your workout programming, pre/post exercise nutrition, rec
           </div>
           <div>
             <div className="ai-title-row">
-              <h2>FitTrack AI Coach</h2>
+              <h2>Fit Tracker AI Coach</h2>
+              <span className="creator-badge">by Srujan</span>
               <span className="ai-badge-gemini">
                 <Sparkles size={12} />
                 Gemini Model
@@ -264,7 +265,7 @@ Ask me anything about your workout programming, pre/post exercise nutrition, rec
                 <span className="typing-dot"></span>
                 <span className="typing-dot"></span>
                 <span className="typing-dot"></span>
-                <span className="typing-text">FitTrack AI is formulating your plan...</span>
+                <span className="typing-text">Fit Tracker AI is formulating your plan...</span>
               </div>
             </div>
           )}
@@ -338,6 +339,20 @@ Ask me anything about your workout programming, pre/post exercise nutrition, rec
 
         .ai-title-row h2 {
           font-size: 1.45rem;
+        }
+
+        .creator-badge {
+          display: inline-flex;
+          align-items: center;
+          padding: 0.18rem 0.55rem;
+          border-radius: var(--radius-full);
+          background: rgba(16, 185, 129, 0.15);
+          border: 1px solid rgba(16, 185, 129, 0.3);
+          color: #34d399;
+          font-size: 0.72rem;
+          font-weight: 700;
+          letter-spacing: 0.05em;
+          text-transform: uppercase;
         }
 
         .ai-badge-gemini {
