@@ -1,0 +1,23 @@
+#!/bin/sh
+# ----------------------------------------------------------------------------
+# Maven Wrapper script for UNIX
+# ----------------------------------------------------------------------------
+
+set -e
+
+WRAPPER_DIR="$(cd "$(dirname "$0")" && pwd)"
+WRAPPER_JAR="$WRAPPER_DIR/.mvn/wrapper/maven-wrapper.jar"
+WRAPPER_PROPERTIES="$WRAPPER_DIR/.mvn/wrapper/maven-wrapper.properties"
+
+# Check if system mvn exists first for instant speed
+if command -v mvn >/dev/null 2>&1; then
+    exec mvn "$@"
+fi
+
+# Fallback: inform user or run java wrapper if present
+if [ -f "$WRAPPER_JAR" ]; then
+    exec java -jar "$WRAPPER_JAR" "$@"
+else
+    echo "FitTrack AI: Running using installed Maven..."
+    exec mvn "$@"
+fi
