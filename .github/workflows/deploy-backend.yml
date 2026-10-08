@@ -1,0 +1,91 @@
+name: Deploy Backend (Render)
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'backend/**'
+      - 'render.yaml'
+      - '.github/workflows/deploy-backend.yml'
+  workflow_dispatch:
+
+jobs:
+  deploy-backend:
+    name: Deploy Backend to Render
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'maven'
+
+      - name: Verify Backend Build
+        working-directory: backend
+        run: |
+          chmod +x mvnw
+          ./mvnw clean package -DskipTests
+
+      - name: Trigger Render Deployment
+        id: render
+        env:
+          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+          RENDER_SERVICE_ID: ${{ secrets.RENDER_SERVICE_ID }}
+        run: |
+          echo "🚀 Triggering deployment on Render for service $RENDER_SERVICE_ID..."
+          RESPONSE=$(curl -s -X POST \
+            -H "Authorization: Bearer $RENDER_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{"clearCache":"do_not_clear"}' \
+            "https://api.render.com/v1/services/$RENDER_SERVICE_ID/deploys")
+
+          echo "Render response: $RESPONSE"
+          DEPLOY_ID=$(echo "$RESPONSE" | grep -o '"id":"[^"]*' | head -n 1 | cut -d'"' -f4)
+          echo "Deploy ID: $DEPLOY_ID"
+          echo "deploy_id=$DEPLOY_ID" >> $GITHUB_OUTPUT
+
+      - name: Wait for Render Deployment
+        env:
+          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+          RENDER_SERVICE_ID: ${{ secrets.RENDER_SERVICE_ID }}
+          DEPLOY_ID: ${{ steps.render.outputs.deploy_id }}
+        run: |
+          if [ -z "$DEPLOY_ID" ]; then
+            echo "⚠️ No Render deploy ID returned, checking latest deploy..."
+            DEPLOY_ID=$(curl -s -H "Authorization: Bearer $RENDER_API_KEY" \
+              "https://api.render.com/v1/services/$RENDER_SERVICE_ID/deploys?limit=1" \
+              | grep -o '"id":"[^"]*' | head -n 1 | cut -d'"' -f4)
+          fi
+
+          echo "⏳ Monitoring Render deploy $DEPLOY_ID..."
+          for i in {1..40}; do
+            STATUS=$(curl -s -H "Authorization: Bearer $RENDER_API_KEY" \
+              "https://api.render.com/v1/services/$RENDER_SERVICE_ID/deploys/$DEPLOY_ID" \
+              | grep -o '"status":"[^"]*' | head -n 1 | cut -d'"' -f4)
+            echo "Current Render status: $STATUS"
+
+            if [ "$STATUS" = "live" ]; then
+              echo "✅ Render backend is live!"
+              break
+            elif [ "$STATUS" = "build_failed" ] || [ "$STATUS" = "update_failed" ] || [ "$STATUS" = "canceled" ]; then
+              echo "❌ Render deployment failed with status: $STATUS"
+              exit 1
+            fi
+            sleep 10
+          done
+
+      - name: Verify Backend Health
+        run: |
+          echo "🩺 Checking live backend health endpoint..."
+          curl -f -s https://fittrack-ai-backend-kwax.onrender.com/api/health || true
+
+      - name: Production Summary
+        run: |
+          echo "### 🚀 Backend Deployed Successfully!" >> $GITHUB_STEP_SUMMARY
+          echo "- **Primary Backend URL**: [https://fittrack-ai-backend-kwax.onrender.com](https://fittrack-ai-backend-kwax.onrender.com)" >> $GITHUB_STEP_SUMMARY
+          echo "- **Health Check URL**: [https://fittrack-ai-backend-kwax.onrender.com/api/health](https://fittrack-ai-backend-kwax.onrender.com/api/health)" >> $GITHUB_STEP_SUMMARY

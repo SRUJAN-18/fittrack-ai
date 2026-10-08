@@ -1,0 +1,93 @@
+name: Deploy Frontend (Vercel)
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'frontend/**'
+      - '.github/workflows/deploy-frontend.yml'
+  workflow_dispatch:
+
+jobs:
+  deploy-frontend:
+    name: Deploy Frontend to Vercel
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Dependencies & Verify Build
+        working-directory: frontend
+        run: |
+          npm ci || npm install
+          npm run build
+
+      - name: Trigger Vercel Production Deployment
+        id: deploy
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        run: |
+          echo "🚀 Triggering Vercel deployment for project $VERCEL_PROJECT_ID..."
+          RESPONSE=$(curl -s -X POST \
+            -H "Authorization: Bearer $VERCEL_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "name": "fittrack-ai-srujan",
+              "project": "'"$VERCEL_PROJECT_ID"'",
+              "target": "production",
+              "gitSource": {
+                "type": "github",
+                "ref": "main",
+                "repoId": 1409214751
+              }
+            }' \
+            "https://api.vercel.com/v13/deployments?teamId=$VERCEL_ORG_ID")
+
+          DEPLOY_URL=$(echo "$RESPONSE" | grep -o '"url":"[^"]*' | head -n 1 | cut -d'"' -f4)
+          DEPLOY_ID=$(echo "$RESPONSE" | grep -o '"id":"[^"]*' | head -n 1 | cut -d'"' -f4)
+          
+          echo "Deployment ID: $DEPLOY_ID"
+          echo "Deployment URL: https://$DEPLOY_URL"
+          echo "deploy_id=$DEPLOY_ID" >> $GITHUB_OUTPUT
+          echo "deploy_url=https://$DEPLOY_URL" >> $GITHUB_OUTPUT
+
+      - name: Wait for Vercel Deployment to be Ready
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          DEPLOY_ID: ${{ steps.deploy.outputs.deploy_id }}
+        run: |
+          if [ -z "$DEPLOY_ID" ]; then
+            echo "⚠️ No deploy ID found, skipping wait."
+            exit 0
+          fi
+
+          echo "⏳ Waiting for Vercel deployment $DEPLOY_ID to finish..."
+          for i in {1..30}; do
+            STATUS=$(curl -s -H "Authorization: Bearer $VERCEL_TOKEN" \
+              "https://api.vercel.com/v13/deployments/$DEPLOY_ID?teamId=$VERCEL_ORG_ID" \
+              | grep -o '"readyState":"[^"]*' | head -n 1 | cut -d'"' -f4)
+            echo "Current status: $STATUS"
+            if [ "$STATUS" = "READY" ]; then
+              echo "✅ Vercel deployment is ready!"
+              break
+            elif [ "$STATUS" = "ERROR" ] || [ "$STATUS" = "CANCELED" ]; then
+              echo "❌ Vercel deployment failed with status: $STATUS"
+              exit 1
+            fi
+            sleep 5
+          done
+
+      - name: Production Summary
+        run: |
+          echo "### 🌐 Frontend Deployed Successfully!" >> $GITHUB_STEP_SUMMARY
+          echo "- **Primary Production URL**: [https://fittrack-ai-srujan.vercel.app](https://fittrack-ai-srujan.vercel.app)" >> $GITHUB_STEP_SUMMARY
+          echo "- **Branch Deployment URL**: ${{ steps.deploy.outputs.deploy_url }}" >> $GITHUB_STEP_SUMMARY
