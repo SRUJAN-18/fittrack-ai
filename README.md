@@ -232,22 +232,42 @@ docker compose ps
 - **Backend**: `http://<your-server-ip>:8080`
 - **MySQL**: Internal network `mysql-db:3306`
 
-### Option 2: Cloud Deployment (Render / Railway / AWS / Heroku + Vercel)
-1. **Database**: Spin up a managed MySQL instance (e.g. AWS RDS, PlanetScale, Railway, or Aiven).
-2. **Backend**:
-   - Deploy `backend/` using Docker or Java 17 runtime.
-   - Configure Environment Variables in your hosting dashboard:
-     - `SPRING_DATASOURCE_URL=jdbc:mysql://<host>:<port>/<db>?useSSL=true&...`
-     - `SPRING_DATASOURCE_USERNAME=<db-user>`
-     - `SPRING_DATASOURCE_PASSWORD=<db-password>`
-     - `GEMINI_API_KEY=<your-key>`
-     - `GEMINI_API_MODEL=gemini-3.5-flash-lite`
-     - `CORS_ALLOWED_ORIGINS=https://your-frontend-domain.vercel.app`
-3. **Frontend (Vercel / Netlify / Cloudflare Pages)**:
-   - Root directory: `frontend`
-   - Build command: `npm run build`
-   - Output directory: `dist`
-   - Set environment variable: `VITE_API_URL=https://your-backend.onrender.com/api`
+### Option 2: Cloud Deployment (Render for Backend + Vercel for Frontend)
+
+#### Step 1: Deploy Backend on Render
+1. Go to [Render Dashboard](https://dashboard.render.com/) and click **New +** → **Web Service** (or use **Blueprint** with the included `render.yaml`).
+2. Connect your GitHub repository: `https://github.com/SRUJAN-18/fittrack-ai`.
+3. Configure the settings:
+   - **Name**: `fittrack-ai-backend`
+   - **Root Directory**: `backend`
+   - **Runtime**: `Docker`
+   - **Dockerfile Path**: `backend/Dockerfile` (or `./Dockerfile` if Root Directory is `backend`)
+   - **Instance Type**: `Free`
+   - **Health Check Path**: `/api/health`
+4. Add **Environment Variables**:
+   - `PORT`: `8080`
+   - `SPRING_DATASOURCE_URL`: JDBC database URL (e.g., MySQL from TiDB Cloud / Aiven / Railway or Render PostgreSQL `jdbc:postgresql://<host>:5432/<db>`)
+   - `SPRING_DATASOURCE_USERNAME`: database username
+   - `SPRING_DATASOURCE_PASSWORD`: database password
+   - `GEMINI_API_KEY`: *(Optional)* Your Google Gemini API key
+   - `GEMINI_API_MODEL`: `gemini-3.5-flash-lite`
+5. Click **Create Web Service**.
+6. Once deployed, Render will provide your backend URL:
+   `https://<your-service-name>.onrender.com` (Test health via `https://<your-service-name>.onrender.com/api/health`)
+
+#### Step 2: Deploy Frontend on Vercel
+1. Go to [Vercel Dashboard](https://vercel.com/new) and click **Import** next to `SRUJAN-18/fittrack-ai`.
+2. Configure Project Settings:
+   - **Framework Preset**: `Vite`
+   - **Root Directory**: Click *Edit* and select `frontend`
+   - **Build Command**: `npm run build`
+   - **Output Directory**: `dist`
+3. Add **Environment Variable**:
+   - Key: `VITE_API_URL`
+   - Value: `https://<your-service-name>.onrender.com/api` (the backend URL from Step 1)
+4. Click **Deploy**.
+5. Vercel will build and assign your production frontend URL:
+   `https://<your-project-name>.vercel.app` (e.g., `https://fittrack-ai.vercel.app`)
 
 ---
 
