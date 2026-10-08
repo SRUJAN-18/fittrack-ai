@@ -2,10 +2,15 @@
  * FitTrack AI - Centralized REST API Client
  */
 
-const BASE_URL = import.meta.env.VITE_API_URL || '/api';
+const rawEnv = (import.meta.env.VITE_API_URL || '/api').trim();
+const normalized = rawEnv.replace(/\/+$/, '');
+const BASE_URL = normalized.endsWith('/api')
+  ? normalized
+  : (normalized === '' ? '/api' : `${normalized}/api`);
 
 export async function apiRequest(endpoint, options = {}) {
-  const url = `${BASE_URL}${endpoint}`;
+  const cleanEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+  const url = `${BASE_URL}${cleanEndpoint}`;
 
   const token = localStorage.getItem('fittrack_token');
 
