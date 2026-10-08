@@ -1,6 +1,11 @@
 # FitTrack AI 🏋️‍♂️🤖
 
-FitTrack AI is a full-stack health & fitness web application powered by **Java Spring Boot**, **React.js**, **MySQL**, and **Google Gemini API**. It enables users to log their physical biometrics, track weight trajectory with interactive charts, calculate real-time BMI metrics, and receive personalized workout, nutrition, hydration, and recovery guidance from a context-aware AI Fitness Coach.
+FitTrack AI is a full-stack health & fitness web application powered by **Java Spring Boot**, **React.js**, **PostgreSQL / MySQL**, and **Google Gemini API**. It enables users to log their physical biometrics, track weight trajectory with interactive charts, calculate real-time BMI metrics, and receive personalized workout, nutrition, hydration, and recovery guidance from a context-aware AI Fitness Coach.
+
+### 🌐 Live Production Deployments
+- **Frontend (Vercel)**: [https://fittrack-ai-srujan.vercel.app](https://fittrack-ai-srujan.vercel.app)
+- **Backend API (Render)**: [https://fittrack-ai-backend-kwax.onrender.com](https://fittrack-ai-backend-kwax.onrender.com)
+- **Health Check**: [https://fittrack-ai-backend-kwax.onrender.com/api/health](https://fittrack-ai-backend-kwax.onrender.com/api/health)
 
 ---
 
